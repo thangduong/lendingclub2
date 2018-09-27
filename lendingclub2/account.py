@@ -15,7 +15,7 @@ from lendingclub2 import utils
 from lendingclub2.config import INVESTOR_ID_ENV
 from lendingclub2.error import LCError
 from lendingclub2.response.notes import Notes
-from lendingclub2.response.order import Order
+from lendingclub2.response.order import Order, OrderNote
 from lendingclub2.response.portfolio import Portfolios
 from lendingclub2.response.summary import Summary
 
@@ -100,3 +100,26 @@ class InvestorAccount:
         if not order.successful:
             fstr = "could not complete the request completely"
             raise LCError(fstr)
+
+    def invest2(self, loanids, loansizes=25, portfolio_id=None):
+        #
+        # Diversify
+        notes = list()
+        balance = self.available_balance
+        if not isinstance(loansizes,list):
+            loansizes = [loansizes] * len(loanids)
+        for loanid,loansize in zip(loanids, loansizes):
+            if balance >= loansize:
+                note = OrderNote(loanid, loansize, portfolio_id=portfolio_id)
+                balance -= loansize
+                notes.append(note)
+            else:
+                print("invest2: NOT ENOUGH BALANCE.  BAILING OUT!")
+                notes = None
+                break
+
+        if notes is not None:
+            order = Order(self.id(), *notes)
+            return order.successful
+        else:
+            return False

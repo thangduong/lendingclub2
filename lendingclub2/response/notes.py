@@ -77,6 +77,14 @@ class Note:
         return self._response['grade']
 
     @property
+    def rate(self):
+        return self._response['interestRate']
+
+    @property
+    def principal_pending(self):
+        return self._response['principalPending']
+
+    @property
     def late(self):
         """
         Check if a note's payment is late
@@ -103,6 +111,16 @@ class Note:
         :returns: int
         """
         return self._response['loanId']
+
+
+    @property
+    def portfolio_id(self):
+        """
+        Get the loan ID
+
+        :returns: int
+        """
+        return self._response['portfolioId']
 
     @property
     def loan_length(self):
